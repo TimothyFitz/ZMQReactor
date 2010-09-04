@@ -36,7 +36,6 @@ class ZeroMQTransport(object):
     def __init__(self, reactor, socket, protocol):
         self.reactor = reactor
         self.socket = socket
-        self.outboundQueue = []
         self.protocol = protocol
         protocol.transport = self
         self.logstr = protocol.__class__.__name__
@@ -46,33 +45,12 @@ class ZeroMQTransport(object):
         return self.socket
         
     def doRead(self):
-        """Calls self.protocol.dataReceived with all available data.
-
-        This reads up to self.bufferSize bytes of data from its socket, then
-        calls self.dataReceived(data) to process it.  If the connection is not
-        lost through an error in the physical recv(), this function will return
-        the result of the dataReceived call.
-        """
         message = self.socket.recv(flags=zmq.NOBLOCK, copy=True)
-        if message is None:
-            return
-        return self.protocol.messageReceived(message)
+        if message is not None:
+            return self.protocol.messageReceived(message)
         
     def sendMessage(self, message):
-        #if self.outboundQueue:
-        #    self.queueMessage(message)
-        #else:
-        try:
-            self.socket.send(message, flags=zmq.NOBLOCK, copy=True)
-        except ZMQError, z:
-            # EAGAIN?
-            print z, z.args
-            raise
-            #self.queueMessage(message)
-
-    def queueMessage(self, message):
-        self.outboundQueue.append(message)
-        self.reactor.addWriter(self)
+        self.socket.send(message, flags=zmq.NOBLOCK, copy=True)
         
     def logPrefix(self):
         return self.logstr
