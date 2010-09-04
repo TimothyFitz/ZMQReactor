@@ -5,8 +5,6 @@ import zmq
 """
 TODO: 
 
-bind_with_random_port; cutover all tests
-logPrefix
 Test coverage around different types of port?
 """
 

@@ -28,16 +28,18 @@ class ZeroMQReactor(PollReactor):
     def _createTransport(self, method, endpoint, type, factory):
         socket = zmq.Socket(self.zmqContext, type)
         method(socket, endpoint)
-        transport = ZeroMQTransport(self, socket)
         protocol = factory()
-        transport.protocol, protocol.transport = protocol, transport
+        transport = ZeroMQTransport(self, socket, protocol)
         return protocol
 
-class ZeroMQTransport(object):
-    def __init__(self, reactor, socket):
+class ZeroMQTransport(object):    
+    def __init__(self, reactor, socket, protocol):
         self.reactor = reactor
         self.socket = socket
         self.outboundQueue = []
+        self.protocol = protocol
+        protocol.transport = self
+        self.logstr = protocol.__class__.__name__
         self.reactor.addReader(self)
         
     def fileno(self):
@@ -73,7 +75,7 @@ class ZeroMQTransport(object):
         self.reactor.addWriter(self)
         
     def logPrefix(self):
-        return "ZMQ" # TODO 
+        return self.logstr
         
     def loseConnection(self):
         self.reactor.removeWriter(self)
