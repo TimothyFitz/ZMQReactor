@@ -5,7 +5,6 @@ import zmq
 """
 TODO: 
 
-Connect/disconnect: Make loseConnection not motherfucking suck. Actually it might be okay. Test it.
 bind_with_random_port; cutover all tests
 logPrefix
 Test coverage around different types of port?
