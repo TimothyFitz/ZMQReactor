@@ -2,12 +2,6 @@ from twisted.trial import unittest
 from twisted.internet import reactor, defer
 import zmq
 
-"""
-TODO: 
-
-Test coverage around different types of port?
-"""
-
 class EchoProtocol(object):
     def messageReceived(self, message):
         print "RECV", message
