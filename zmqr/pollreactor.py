@@ -1,6 +1,7 @@
 # Copyright (c) 2001-2010 Twisted Matrix Laboratories.
 # See LICENSE for details.
 
+# TEMPORARILY FORKED by TimothyFitz to let zmqreactor be a subclass.
 
 """
 A poll() based implementation of the twisted main loop.
@@ -67,10 +68,9 @@ class PollReactor(posixbase.PosixReactorBase):
         self._writes = {}
         posixbase.PosixReactorBase.__init__(self)
 
-
     def _updateRegistration(self, fd):
         """Register/unregister an fd with the poller."""
-        try: 
+        try:
             self._poller.unregister(fd)
         except KeyError:
             pass
@@ -202,8 +202,6 @@ class PollReactor(posixbase.PosixReactorBase):
 
     def getWriters(self):
         return [self._selectables[fd] for fd in self._writes]
-
-
 
 def install():
     """Install the poll() reactor."""

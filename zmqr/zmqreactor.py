@@ -1,4 +1,4 @@
-from pollreactor import PollReactor
+from zmqr.pollreactor import PollReactor
 
 from zmq import Poller, ZMQError
 import zmq
